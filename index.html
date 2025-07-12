@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ocaquatics Swim Lesson Calendar</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background-color: #A1D4F3; color: #2B3990; }
+    h1 { color: #0079C1; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+    .logo { height: 80px; margin-right: 15px; }
+    .calendar-wrapper { margin-top: 20px; }
+    .month-block { margin-bottom: 30px; background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .month-title { font-weight: bold; margin-bottom: 10px; font-size: 1.2em; border-bottom: 2px solid #0079C1; padding-bottom: 5px; color: #0079C1; }
+    .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+    .weekday-label { font-weight: bold; text-align: center; color: #2B3990; }
+    .day { padding: 10px; border: 1px solid #ccc; text-align: center; background-color: white; border-radius: 4px; }
+    .lesson { background-color: #FFC425 !important; }
+    .holiday { background-color: #f2dede !important; color: #a94442; }
+    .month-summary { margin-top: 20px; font-weight: bold; }
+    .legend { margin-top: 20px; background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .legend div { margin-bottom: 5px; }
+    .legend span { display: inline-block; width: 20px; height: 20px; margin-right: 10px; vertical-align: middle; border-radius: 4px; }
+    .lesson-color { background-color: #FFC425; }
+    .holiday-color { background-color: #f2dede; border: 1px solid #a94442; }
+    label { margin-right: 10px; }
+    button { background-color: #0079C1; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 5px; cursor: pointer; margin-top: 10px; margin-right: 10px; }
+    button:hover { background-color: #2B3990; }
+    .button-group { margin-top: 15px; }
+
+    @media (max-width: 600px) {
+      .calendar { font-size: 12px; }
+      .day, .weekday-label { padding: 6px; }
+      h1 { flex-direction: column; align-items: flex-start; }
+      .logo { height: 60px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Body content omitted for brevity -->
+</body>
+</html>
