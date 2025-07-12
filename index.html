@@ -2,8 +2,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ocaquatics Swim Lesson Calendar</title>
   <style>
     body { font-family: sans-serif; padding: 20px; background-color: #A1D4F3; color: #2B3990; }
@@ -27,7 +27,6 @@
     button { background-color: #0079C1; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 5px; cursor: pointer; margin-top: 10px; margin-right: 10px; }
     button:hover { background-color: #2B3990; }
     .button-group { margin-top: 15px; }
-
     @media (max-width: 600px) {
       .calendar { font-size: 12px; }
       .day, .weekday-label { padding: 6px; }
@@ -37,6 +36,118 @@
   </style>
 </head>
 <body>
-  <!-- Body content omitted for brevity -->
+  <h1>
+    <img src="logo.png" alt="Ocaquatics Logo" class="logo"/>
+    Ocaquatics Swim Lesson Calendar
+  </h1>
+  <p>Select your start date and swim days to see which days your child will have lessons.</p>
+
+  <label>Start Date: <input type="date" id="startDate"></label>
+  <div>
+    <strong>Select Swim Days:</strong><br>
+    <label><input type="checkbox" class="swimDay" value="0"> Monday</label>
+    <label><input type="checkbox" class="swimDay" value="1"> Tuesday</label>
+    <label><input type="checkbox" class="swimDay" value="2"> Wednesday</label>
+    <label><input type="checkbox" class="swimDay" value="3"> Thursday</label>
+    <label><input type="checkbox" class="swimDay" value="4"> Friday</label>
+    <label><input type="checkbox" class="swimDay" value="5"> Saturday</label>
+    <label><input type="checkbox" class="swimDay" value="6"> Sunday</label>
+  </div>
+  <div class="button-group">
+    <button onclick="generateCalendar()">Show Calendar</button>
+    <button onclick="window.print()">Print Calendar</button>
+  </div>
+
+  <div id="calendarContainer" class="calendar-wrapper"></div>
+  <div id="monthSummary" class="month-summary"></div>
+
+  <div class="legend">
+    <strong>Legend:</strong>
+    <div><span class="lesson-color"></span> Lesson Day</div>
+    <div><span class="holiday-color"></span> Holiday - No Class</div>
+  </div>
+
+  <script>
+    const holidayMap = {
+      '2025-01-01': "New Year’s Day", '2025-04-20': "Easter Sunday", '2025-07-04': "Independence Day",
+      '2025-09-01': "Labor Day", '2025-11-27': "Thanksgiving", '2025-12-24': "Christmas Eve",
+      '2025-12-25': "Christmas Day", '2025-12-26': "Holiday Break", '2025-12-27': "Holiday Break",
+      '2025-12-28': "Holiday Break", '2025-12-29': "Holiday Break", '2025-12-30': "Holiday Break",
+      '2025-12-31': "Holiday Break", '2026-01-01': "New Year’s Day", '2026-04-05': "Easter Sunday",
+      '2026-07-04': "Independence Day", '2026-09-07': "Labor Day", '2026-11-26': "Thanksgiving",
+      '2026-12-24': "Christmas Eve", '2026-12-25': "Christmas Day", '2026-12-26': "Holiday Break",
+      '2026-12-27': "Holiday Break", '2026-12-28': "Holiday Break", '2026-12-29': "Holiday Break",
+      '2026-12-30': "Holiday Break", '2026-12-31': "Holiday Break", '2027-01-01': "New Year’s Day"
+    };
+    const weekdayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+    function generateCalendar() {
+      const startDate = new Date(document.getElementById('startDate').value);
+      if (isNaN(startDate)) { alert('Please select a valid start date.'); return; }
+
+      const swimDays = Array.from(document.querySelectorAll('.swimDay:checked')).map(cb => parseInt(cb.value));
+      const container = document.getElementById('calendarContainer');
+      const summary = document.getElementById('monthSummary');
+      container.innerHTML = ''; summary.innerHTML = '';
+
+      const lessonCounts = {};
+      for (let m = 0; m < 3; m++) {
+        const monthStart = new Date(startDate.getFullYear(), startDate.getMonth() + m, 1);
+        const monthKey = `${monthStart.getFullYear()}-${String(monthStart.getMonth()+1).padStart(2, '0')}`;
+        lessonCounts[monthKey] = 0;
+
+        const monthBlock = document.createElement('div');
+        monthBlock.className = 'month-block';
+        const title = document.createElement('div');
+        title.className = 'month-title';
+        title.textContent = monthStart.toLocaleString('default', { month: 'long', year: 'numeric' });
+        monthBlock.appendChild(title);
+
+        const grid = document.createElement('div');
+        grid.className = 'calendar';
+        weekdayNames.forEach(day => {
+          const label = document.createElement('div');
+          label.className = 'weekday-label';
+          label.textContent = day;
+          grid.appendChild(label);
+        });
+
+        const firstDayIndex = (monthStart.getDay() + 6) % 7;
+        for (let i = 0; i < firstDayIndex; i++) {
+          const empty = document.createElement('div');
+          empty.className = 'day';
+          grid.appendChild(empty);
+        }
+
+        const daysInMonth = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0).getDate();
+        for (let d = 1; d <= daysInMonth; d++) {
+          const date = new Date(monthStart.getFullYear(), monthStart.getMonth(), d);
+          const dateStr = date.toISOString().split('T')[0];
+          const weekdayIndex = (date.getDay() + 6) % 7;
+          const dayDiv = document.createElement('div');
+          dayDiv.className = 'day';
+          dayDiv.textContent = d;
+
+          if (holidayMap[dateStr]) {
+            dayDiv.classList.add('holiday');
+            dayDiv.title = holidayMap[dateStr];
+          } else if (swimDays.includes(weekdayIndex)) {
+            dayDiv.classList.add('lesson');
+            dayDiv.title = 'Lesson Day';
+            lessonCounts[monthKey]++;
+          }
+          grid.appendChild(dayDiv);
+        }
+        monthBlock.appendChild(grid);
+        container.appendChild(monthBlock);
+      }
+
+      summary.innerHTML = Object.entries(lessonCounts).map(([key, val]) => {
+        const [year, month] = key.split('-');
+        const monthName = new Date(year, month - 1).toLocaleString('default', { month: 'long' });
+        return `${monthName}: <strong style='color:#0079C1;'>${val} lessons!</strong>`;
+      }).join('<br>');
+    }
+  </script>
 </body>
 </html>
